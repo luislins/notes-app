@@ -121,8 +121,61 @@ button:disabled {
   margin-bottom: 0.5rem;
 }
 
-.note-card small {
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.note-footer small {
   color: #999;
   font-size: 0.8rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-edit {
+  background: #f0ad4e;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-edit:hover {
+  background: #ec971f;
+}
+
+.btn-delete {
+  background: #d9534f;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-delete:hover {
+  background: #c9302c;
+}
+
+.btn-cancel {
+  background: #6c757d;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.btn-cancel:hover {
+  background: #5a6268;
+}
+
+.edit-form input,
+.edit-form textarea {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  margin-bottom: 0.5rem;
 }
 </style>

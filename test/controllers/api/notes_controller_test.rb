@@ -45,4 +45,45 @@ class Api::NotesControllerTest < ActionDispatch::IntegrationTest
     json = JSON.parse(response.body)
     assert_includes json["errors"], "Title can't be blank"
   end
+
+  test "show returns a note" do
+    note = notes(:with_content)
+    get api_note_url(note), as: :json
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal note.title, json["title"]
+  end
+
+  test "show returns 404 for nonexistent note" do
+    get api_note_url(id: 999999), as: :json
+    assert_response :not_found
+  end
+
+  test "update with valid params" do
+    note = notes(:with_content)
+    patch api_note_url(note), params: { note: { title: "Atualizado" } }, as: :json
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal "Atualizado", json["title"]
+  end
+
+  test "update with invalid params returns errors" do
+    note = notes(:with_content)
+    patch api_note_url(note), params: { note: { title: "" } }, as: :json
+
+    assert_response :unprocessable_entity
+    json = JSON.parse(response.body)
+    assert_includes json["errors"], "Title can't be blank"
+  end
+
+  test "destroy deletes the note" do
+    note = notes(:with_content)
+    assert_difference("Note.count", -1) do
+      delete api_note_url(note), as: :json
+    end
+
+    assert_response :no_content
+  end
 end
