@@ -1,7 +1,9 @@
 with_content:
   title: Reunião de equipe
   content: Discutir metas do trimestre
+  user: one
 
 without_content:
   title: Lembrete rápido
   content:
+  user: one
