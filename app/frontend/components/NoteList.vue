@@ -24,7 +24,7 @@
             <small>{{ formatDate(note.created_at) }}</small>
             <div class="actions">
               <button class="btn-edit" @click="startEdit(note)">Editar</button>
-              <button class="btn-delete" @click="deleteNote(note.id)">Excluir</button>
+              <button class="btn-delete" @click="handleDelete(note.id)">Excluir</button>
             </div>
           </div>
         </template>
@@ -35,6 +35,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { fetchNotes as apiFetchNotes, updateNote, deleteNote } from '../services/api.js'
 
 const notes = ref([])
 const loading = ref(true)
@@ -43,13 +44,10 @@ const editTitle = ref('')
 const editContent = ref('')
 const editErrors = ref([])
 
-const API_URL = 'http://localhost:5100/api/notes'
-
 async function fetchNotes() {
   loading.value = true
   try {
-    const response = await fetch(API_URL)
-    notes.value = await response.json()
+    notes.value = await apiFetchNotes()
   } catch {
     notes.value = []
   } finally {
@@ -72,29 +70,23 @@ function cancelEdit() {
 async function saveEdit(id) {
   editErrors.value = []
   try {
-    const response = await fetch(`${API_URL}/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note: { title: editTitle.value, content: editContent.value } })
-    })
-
-    if (response.ok) {
+    const result = await updateNote(id, editTitle.value, editContent.value)
+    if (result.ok) {
       editingId.value = null
       await fetchNotes()
     } else {
-      const data = await response.json()
-      editErrors.value = data.errors || ['Erro ao atualizar anotação']
+      editErrors.value = result.data.errors || ['Erro ao atualizar anotação']
     }
   } catch {
     editErrors.value = ['Erro de conexão com o servidor']
   }
 }
 
-async function deleteNote(id) {
+async function handleDelete(id) {
   if (!confirm('Tem certeza que deseja excluir esta anotação?')) return
 
   try {
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' })
+    await deleteNote(id)
     await fetchNotes()
   } catch {
     alert('Erro ao excluir anotação')

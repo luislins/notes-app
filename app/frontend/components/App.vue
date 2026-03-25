@@ -1,14 +1,38 @@
 <template>
   <div class="container">
-    <h1>Anotações</h1>
-    <NoteForm @created="$refs.list.fetchNotes()" />
-    <NoteList ref="list" />
+    <template v-if="authenticated">
+      <header class="app-header">
+        <h1>Anotações</h1>
+        <button class="btn-logout" @click="handleLogout">Sair</button>
+      </header>
+      <NoteForm @created="$refs.list.fetchNotes()" />
+      <NoteList ref="list" />
+    </template>
+    <AuthForm v-else @authenticated="onAuthenticated" />
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import { isAuthenticated, logout } from '../services/api.js'
+import AuthForm from './AuthForm.vue'
 import NoteForm from './NoteForm.vue'
 import NoteList from './NoteList.vue'
+
+const authenticated = ref(false)
+
+onMounted(() => {
+  authenticated.value = isAuthenticated()
+})
+
+function onAuthenticated() {
+  authenticated.value = true
+}
+
+function handleLogout() {
+  logout()
+  authenticated.value = false
+}
 </script>
 
 <style>
@@ -30,9 +54,39 @@ body {
   padding: 0 1rem;
 }
 
-h1 {
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 1.5rem;
+}
+
+h1 {
   font-size: 1.75rem;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.auth-form {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form .toggle {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+.auth-form .toggle a {
+  color: #4a90d9;
+  text-decoration: none;
 }
 
 .note-form {
@@ -88,6 +142,18 @@ button:hover {
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.btn-logout {
+  background: transparent;
+  color: #999;
+  font-size: 0.875rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.btn-logout:hover {
+  color: #d9534f;
+  background: transparent;
 }
 
 .errors {

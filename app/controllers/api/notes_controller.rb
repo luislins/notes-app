@@ -3,7 +3,7 @@ module Api
     before_action :set_note, only: [:show, :update, :destroy]
 
     def index
-      notes = Note.order(created_at: :desc)
+      notes = Current.user.notes.order(created_at: :desc)
       render json: notes
     end
 
@@ -12,7 +12,7 @@ module Api
     end
 
     def create
-      note = Note.new(note_params)
+      note = Current.user.notes.build(note_params)
 
       if note.save
         render json: note, status: :created
@@ -37,7 +37,7 @@ module Api
     private
 
     def set_note
-      @note = Note.find(params[:id])
+      @note = Current.user.notes.find(params[:id])
     end
 
     def note_params
