@@ -18,7 +18,7 @@ import { ref, onMounted } from 'vue'
 const notes = ref([])
 const loading = ref(true)
 
-const API_URL = 'http://localhost:3000/api/notes'
+const API_URL = 'http://localhost:5100/api/notes'
 
 async function fetchNotes() {
   loading.value = true

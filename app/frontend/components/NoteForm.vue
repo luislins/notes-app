@@ -40,7 +40,7 @@ const content = ref('')
 const errors = ref([])
 const submitting = ref(false)
 
-const API_URL = 'http://localhost:3000/api/notes'
+const API_URL = 'http://localhost:5100/api/notes'
 
 async function handleSubmit() {
   errors.value = []
