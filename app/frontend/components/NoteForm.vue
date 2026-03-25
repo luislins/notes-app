@@ -32,6 +32,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { createNote } from '../services/api.js'
 
 const emit = defineEmits(['created'])
 
@@ -40,26 +41,19 @@ const content = ref('')
 const errors = ref([])
 const submitting = ref(false)
 
-const API_URL = 'http://localhost:5100/api/notes'
-
 async function handleSubmit() {
   errors.value = []
   submitting.value = true
 
   try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ note: { title: title.value, content: content.value } })
-    })
+    const result = await createNote(title.value, content.value)
 
-    if (response.ok) {
+    if (result.ok) {
       title.value = ''
       content.value = ''
       emit('created')
     } else {
-      const data = await response.json()
-      errors.value = data.errors || ['Erro ao criar anotação']
+      errors.value = result.data.errors || ['Erro ao criar anotação']
     }
   } catch {
     errors.value = ['Erro de conexão com o servidor']
