@@ -1,9 +1,7 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+with_content:
+  title: Reunião de equipe
+  content: Discutir metas do trimestre
 
-one:
-  title: MyString
-  content: MyText
-
-two:
-  title: MyString
-  content: MyText
+without_content:
+  title: Lembrete rápido
+  content:
