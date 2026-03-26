@@ -120,10 +120,6 @@ const props = defineProps({
 
 const emit = defineEmits(['categories-changed'])
 
-const defaultColors = [
-  '#fdf0d5', '#dce8d2', '#f5ddd1', '#d4e4ed', '#f0e0ef', '#e8e0d0'
-]
-
 
 const notes = ref([])
 const loading = ref(true)
@@ -155,9 +151,7 @@ function noteCardStyle(note) {
   if (note.category?.color) {
     return { background: note.category.color }
   }
-  // fallback: cycle through default colors by id
-  const idx = note.id % defaultColors.length
-  return { background: defaultColors[idx] }
+  return { background: '#f0ece6' }
 }
 
 async function fetchNotes() {
