@@ -35,4 +35,26 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
   end
+
+  test "register with short password returns errors" do
+    assert_no_difference("User.count") do
+      post registration_url, params: {
+        user: { email_address: "new@example.com", password: "1234567", password_confirmation: "1234567" }
+      }, as: :json
+    end
+
+    assert_response :unprocessable_entity
+    json = JSON.parse(response.body)
+    assert json["errors"].any? { |e| e.include?("Senha") }
+  end
+
+  test "register with invalid email returns errors" do
+    assert_no_difference("User.count") do
+      post registration_url, params: {
+        user: { email_address: "invalido", password: "password123", password_confirmation: "password123" }
+      }, as: :json
+    end
+
+    assert_response :unprocessable_entity
+  end
 end

@@ -100,4 +100,48 @@ class Api::NotesControllerTest < ActionDispatch::IntegrationTest
     get api_note_url(other_note), headers: auth_headers, as: :json
     assert_response :not_found
   end
+
+  test "create with category" do
+    category = categories(:work)
+    post api_notes_url, params: { note: { title: "Com categoria", category_id: category.id } }, headers: auth_headers, as: :json
+
+    assert_response :created
+    json = JSON.parse(response.body)
+    assert_equal category.id, json["category"]["id"]
+    assert_equal category.name, json["category"]["name"]
+  end
+
+  test "create without category returns null category" do
+    post api_notes_url, params: { note: { title: "Sem categoria" } }, headers: auth_headers, as: :json
+
+    assert_response :created
+    json = JSON.parse(response.body)
+    assert_nil json["category"]
+  end
+
+  test "update category" do
+    note = notes(:with_content)
+    category = categories(:work)
+    patch api_note_url(note), params: { note: { category_id: category.id } }, headers: auth_headers, as: :json
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal category.id, json["category"]["id"]
+  end
+
+  test "cannot update other user note" do
+    other_note = users(:two).notes.create!(title: "Alheia")
+    patch api_note_url(other_note), params: { note: { title: "Hack" } }, headers: auth_headers, as: :json
+
+    assert_response :not_found
+  end
+
+  test "cannot delete other user note" do
+    other_note = users(:two).notes.create!(title: "Alheia")
+    assert_no_difference("Note.count") do
+      delete api_note_url(other_note), headers: auth_headers, as: :json
+    end
+
+    assert_response :not_found
+  end
 end
