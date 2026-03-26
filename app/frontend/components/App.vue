@@ -512,7 +512,7 @@ button:disabled {
 }
 
 .note-footer small {
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 0.6875rem;
   letter-spacing: 0.02em;
 }
@@ -524,10 +524,10 @@ button:disabled {
 
 .btn-edit {
   background: rgba(255, 255, 255, 0.5);
-  color: var(--text-secondary);
+  color: var(--text);
   padding: 0.25rem 0.625rem;
   font-size: 0.7rem;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .btn-edit:hover {
@@ -540,7 +540,7 @@ button:disabled {
 
 .btn-delete {
   background: transparent;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   padding: 0.25rem 0.625rem;
   font-size: 0.7rem;
   border: 1px solid transparent;
@@ -865,6 +865,50 @@ button:disabled {
 .category-dropdown-item.active {
   background: var(--accent-light);
   color: var(--accent);
+}
+
+/* ── Dark card variant ── */
+
+.note-card-dark h3 {
+  color: #fff;
+}
+
+.note-card-dark p {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.note-card-dark .note-category-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.note-card-dark .note-footer {
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+.note-card-dark .note-footer small {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.note-card-dark .btn-edit {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.note-card-dark .btn-edit:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.note-card-dark .btn-delete {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.note-card-dark .btn-delete:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ff9e9e;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* ── Note Category Label ── */

@@ -59,6 +59,7 @@
         v-for="note in filteredNotes"
         :key="note.id"
         class="note-card"
+        :class="{ 'note-card-dark': isDarkColor(note.category?.color) }"
         :style="noteCardStyle(note)"
       >
         <div v-if="note.category" class="note-category-label">{{ note.category.name }}</div>
@@ -105,6 +106,16 @@ const filteredNotes = computed(() => {
   if (!filterCategoryId.value) return notes.value
   return notes.value.filter(n => n.category?.id === filterCategoryId.value)
 })
+
+function isDarkColor(hex) {
+  if (!hex) return false
+  const c = hex.replace('#', '')
+  const r = parseInt(c.substring(0, 2), 16)
+  const g = parseInt(c.substring(2, 4), 16)
+  const b = parseInt(c.substring(4, 6), 16)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+  return luminance < 0.55
+}
 
 function noteCardStyle(note) {
   if (note.category?.color) {
