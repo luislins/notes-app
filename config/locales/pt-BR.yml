@@ -7,6 +7,9 @@ pt-BR:
       note:
         title: Título
         content: Conteúdo
+      category:
+        name: Nome
+        color: Cor
       user:
         email_address: E-mail
         password: Senha

@@ -14,10 +14,10 @@
 
       <div v-if="showForm" class="note-editor-overlay">
         <button class="btn-editor-close" @click="showForm = false">&times;</button>
-        <NoteForm @created="onNoteCreated" />
+        <NoteForm :categories="categories" @created="onNoteCreated" />
       </div>
 
-      <NoteList ref="list" />
+      <NoteList ref="list" :categories="categories" @categories-changed="loadCategories" />
     </template>
     <AuthForm v-else @authenticated="onAuthenticated" />
   </div>
@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { isAuthenticated, logout } from '../services/api.js'
+import { isAuthenticated, logout, fetchCategories } from '../services/api.js'
 import AuthForm from './AuthForm.vue'
 import NoteForm from './NoteForm.vue'
 import NoteList from './NoteList.vue'
@@ -33,13 +33,24 @@ import NoteList from './NoteList.vue'
 const authenticated = ref(false)
 const showForm = ref(false)
 const list = ref(null)
+const categories = ref([])
 
 onMounted(() => {
   authenticated.value = isAuthenticated()
+  if (authenticated.value) loadCategories()
 })
 
 function onAuthenticated() {
   authenticated.value = true
+  loadCategories()
+}
+
+async function loadCategories() {
+  try {
+    categories.value = await fetchCategories()
+  } catch {
+    categories.value = []
+  }
 }
 
 function onNoteCreated() {

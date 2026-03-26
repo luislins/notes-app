@@ -3,8 +3,10 @@ module Api
     before_action :set_note, only: [:show, :update, :destroy]
 
     def index
-      notes = Current.user.notes.order(created_at: :desc)
-      render json: notes
+      notes = Current.user.notes.includes(:category).order(created_at: :desc)
+      render json: notes.map { |note|
+        note.as_json.merge(category: note.category&.as_json)
+      }
     end
 
     def show
@@ -41,7 +43,7 @@ module Api
     end
 
     def note_params
-      params.expect(note: [:title, :content])
+      params.expect(note: [:title, :content, :category_id])
     end
   end
 end

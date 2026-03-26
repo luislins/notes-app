@@ -51,24 +51,49 @@ export async function fetchNotes() {
   return response.json()
 }
 
-export async function createNote(title, content) {
+export async function createNote(title, content, category_id) {
   const response = await fetch(`${API_BASE}/api/notes`, {
     method: 'POST',
     headers: authHeaders(),
-    body: JSON.stringify({ note: { title, content } })
+    body: JSON.stringify({ note: { title, content, category_id } })
   })
   const data = await response.json()
   return { ok: response.ok, data }
 }
 
-export async function updateNote(id, title, content) {
+export async function updateNote(id, title, content, category_id) {
   const response = await fetch(`${API_BASE}/api/notes/${id}`, {
     method: 'PATCH',
     headers: authHeaders(),
-    body: JSON.stringify({ note: { title, content } })
+    body: JSON.stringify({ note: { title, content, category_id } })
   })
   const data = await response.json()
   return { ok: response.ok, data }
+}
+
+// Categories
+
+export async function fetchCategories() {
+  const response = await fetch(`${API_BASE}/api/categories`, { headers: authHeaders() })
+  return response.json()
+}
+
+export async function createCategory(name, color) {
+  const response = await fetch(`${API_BASE}/api/categories`, {
+    method: 'POST',
+    headers: authHeaders(),
+    body: JSON.stringify({ category: { name, color } })
+  })
+  const data = await response.json()
+  return { ok: response.ok, data }
+}
+
+export async function deleteCategory(id) {
+  const response = await fetch(`${API_BASE}/api/categories/${id}`, {
+    method: 'DELETE',
+    headers: authHeaders()
+  })
+  return { ok: response.ok }
 }
 
 export async function deleteNote(id) {
