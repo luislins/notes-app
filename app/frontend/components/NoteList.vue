@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
 import { fetchNotes as apiFetchNotes, updateNote, deleteNote, createCategory, deleteCategory } from '../services/api.js'
 
 const props = defineProps({
@@ -140,6 +140,11 @@ const editErrors = ref([])
 const showNewCategory = ref(false)
 const newCategoryName = ref('')
 const newCategoryColor = ref('#fdf0d5')
+const catNameInput = ref(null)
+
+watch(showNewCategory, (val) => {
+  if (val) nextTick(() => catNameInput.value?.focus())
+})
 
 const filteredNotes = computed(() => {
   if (!filterCategoryId.value) return notes.value
@@ -211,7 +216,7 @@ async function handleCreateCategory() {
     const result = await createCategory(newCategoryName.value, newCategoryColor.value)
     if (result.ok) {
       newCategoryName.value = ''
-      newCategoryColor.value = colorOptions[0]
+      newCategoryColor.value = '#fdf0d5'
       showNewCategory.value = false
       emit('categories-changed')
     }

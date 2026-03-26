@@ -653,16 +653,65 @@ button:disabled {
   color: var(--danger);
 }
 
-/* ── New Category Form ── */
+/* ── Modal (generic) ── */
 
-.new-category-form {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.25rem;
-  margin-bottom: 1.5rem;
-  animation: slideIn 250ms ease-out;
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 36, 24, 0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: 100;
+  animation: fadeIn 200ms ease-out;
 }
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--border);
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  animation: slideIn 300ms ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.modal-header h2 {
+  margin-bottom: 0;
+}
+
+.btn-modal-close {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+}
+
+.btn-modal-close:hover {
+  color: var(--text);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* ── New Category Form ── */
 
 .cat-input {
   width: 100%;
