@@ -51,6 +51,8 @@ bin/rails db:seed
 
 ## Executando o projeto
 
+### Sem Docker
+
 ```bash
 bin/dev
 ```
@@ -59,6 +61,23 @@ Isso inicia os dois servidores:
 
 - **Rails API:** http://localhost:5100
 - **Vue (Vite):** http://localhost:3036
+
+Acesse o frontend em **http://localhost:3036**.
+
+### Com Docker
+
+```bash
+docker compose up --build
+```
+
+Na primeira execução, crie o banco e rode as migrations:
+
+```bash
+docker compose exec web bin/rails db:create db:migrate
+
+# (Opcional) Popular com dados de demonstração
+docker compose exec web bin/rails db:seed
+```
 
 Acesse o frontend em **http://localhost:3036**.
 
