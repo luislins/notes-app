@@ -114,6 +114,12 @@ onBeforeUnmount(() => {
 
 async function handleSubmit() {
   errors.value = []
+
+  if (!title.value.trim()) {
+    errors.value = ['Título não pode ficar em branco']
+    return
+  }
+
   submitting.value = true
 
   try {
