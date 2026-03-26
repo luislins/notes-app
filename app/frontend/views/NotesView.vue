@@ -20,7 +20,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { logout, fetchCategories, createNote } from '../services/api.js'
+import { logout } from '../services/auth.js'
+import { createNote } from '../services/notes.js'
+import { fetchCategories } from '../services/categories.js'
 import NoteList from '../components/NoteList.vue'
 
 const router = useRouter()

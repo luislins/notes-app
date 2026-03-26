@@ -55,7 +55,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
-import { updateNote } from '../services/api.js'
+import { updateNote } from '../services/notes.js'
 
 const props = defineProps({
   categories: { type: Array, default: () => [] },
@@ -300,7 +300,7 @@ defineExpose({
 
 .save-status {
   font-size: 0.75rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   transition: opacity var(--transition);
 }
 

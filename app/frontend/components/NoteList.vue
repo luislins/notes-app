@@ -98,7 +98,8 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
-import { fetchNotes as apiFetchNotes, deleteNote, createCategory, deleteCategory } from '../services/api.js'
+import { fetchNotes as apiFetchNotes, deleteNote } from '../services/notes.js'
+import { createCategory, deleteCategory } from '../services/categories.js'
 
 const props = defineProps({
   categories: { type: Array, default: () => [] }

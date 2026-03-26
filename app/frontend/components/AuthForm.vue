@@ -36,7 +36,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { login, register } from '../services/api.js'
+import { login, register } from '../services/auth.js'
 
 const emit = defineEmits(['authenticated'])
 

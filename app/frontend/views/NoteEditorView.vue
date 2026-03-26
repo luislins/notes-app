@@ -11,7 +11,8 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { fetchNote, fetchCategories, deleteNote } from '../services/api.js'
+import { fetchNote, deleteNote } from '../services/notes.js'
+import { fetchCategories } from '../services/categories.js'
 import NoteForm from '../components/NoteForm.vue'
 
 const router = useRouter()
