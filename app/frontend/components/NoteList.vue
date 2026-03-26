@@ -1,9 +1,9 @@
 <template>
   <div class="note-list">
-    <p v-if="loading">Carregando...</p>
+    <p v-if="loading" class="empty">Carregando...</p>
     <p v-else-if="notes.length === 0" class="empty">Nenhuma anotação encontrada.</p>
-    <div v-else>
-      <div v-for="note in notes" :key="note.id" class="note-card">
+    <div v-else class="notes-grid">
+      <div v-for="(note, index) in notes" :key="note.id" class="note-card" :class="'note-color-' + (index % 6)">
         <template v-if="editingId === note.id">
           <form @submit.prevent="saveEdit(note.id)" class="edit-form">
             <input v-model="editTitle" placeholder="Título" />
