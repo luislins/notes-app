@@ -87,7 +87,6 @@ const props = defineProps({
 
 const emit = defineEmits(['categories-changed', 'edit'])
 
-
 const notes = ref([])
 const loading = ref(true)
 const filterCategoryId = ref(null)
@@ -187,3 +186,367 @@ onMounted(fetchNotes)
 
 defineExpose({ fetchNotes })
 </script>
+
+<style scoped>
+/* ── Categories Bar ── */
+
+.categories-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.category-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.375rem 0.875rem;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.category-chip:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  transform: none;
+  box-shadow: none;
+}
+
+.category-chip.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.category-chip.active:hover {
+  background: var(--accent-light);
+}
+
+.category-chip.add-chip {
+  border-style: dashed;
+  color: var(--text-muted);
+}
+
+.category-chip.add-chip:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.chip-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.chip-remove {
+  font-size: 1rem;
+  line-height: 1;
+  margin-left: 0.125rem;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.category-chip:hover .chip-remove {
+  opacity: 0.6;
+}
+
+.chip-remove:hover {
+  opacity: 1 !important;
+  color: var(--danger);
+}
+
+/* ── Modal ── */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 36, 24, 0.3);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: 100;
+  animation: fadeIn 200ms ease-out;
+}
+
+.modal {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg), 0 0 0 1px var(--border);
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  animation: slideIn 300ms ease-out;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.modal-header h2 {
+  margin-bottom: 0;
+}
+
+.btn-modal-close {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  padding: 0.25rem 0.5rem;
+  line-height: 1;
+}
+
+.btn-modal-close:hover {
+  color: var(--text);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.cat-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  margin-bottom: 0.75rem;
+}
+
+.cat-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+}
+
+.color-picker-row {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin-bottom: 0.75rem;
+}
+
+.color-picker-label {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.color-picker-input {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  padding: 2px;
+  cursor: pointer;
+  background: none;
+}
+
+.color-picker-input::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker-input::-webkit-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+.color-picker-input::-moz-color-swatch {
+  border: none;
+  border-radius: 50%;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: var(--surface-hover);
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Notes Grid ── */
+
+.empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 3rem 2rem;
+  font-style: italic;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.note-card {
+  padding: 1.5rem 1.5rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+  animation: slideIn 400ms ease-out both;
+  display: flex;
+  flex-direction: column;
+  min-height: 180px;
+}
+
+.note-card:nth-child(1) { animation-delay: 0ms; }
+.note-card:nth-child(2) { animation-delay: 50ms; }
+.note-card:nth-child(3) { animation-delay: 100ms; }
+.note-card:nth-child(4) { animation-delay: 150ms; }
+.note-card:nth-child(5) { animation-delay: 200ms; }
+.note-card:nth-child(6) { animation-delay: 250ms; }
+
+.note-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.note-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.note-card p {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  flex-grow: 1;
+}
+
+.note-category-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(44, 36, 24, 0.45);
+  margin-bottom: 0.375rem;
+}
+
+.note-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.625rem;
+  padding-top: 0.625rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.note-footer small {
+  color: var(--text-secondary);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+}
+
+.actions {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.btn-edit {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--text);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.btn-edit:hover {
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-delete {
+  background: transparent;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.7rem;
+  border: 1px solid transparent;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--danger);
+  border-color: rgba(192, 57, 43, 0.15);
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Dark card variant ── */
+
+.note-card-dark h3 {
+  color: #fff;
+}
+
+.note-card-dark p {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.note-card-dark .note-category-label {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.note-card-dark .note-footer {
+  border-top-color: rgba(255, 255, 255, 0.15);
+}
+
+.note-card-dark .note-footer small {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.note-card-dark .btn-edit {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.note-card-dark .btn-edit:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.note-card-dark .btn-delete {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.note-card-dark .btn-delete:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ff9e9e;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+</style>
