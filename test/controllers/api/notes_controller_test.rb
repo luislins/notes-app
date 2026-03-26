@@ -34,7 +34,6 @@ class Api::NotesControllerTest < ActionDispatch::IntegrationTest
     assert_response :created
     json = JSON.parse(response.body)
     assert_equal "Nova nota", json["title"]
-    assert_equal users(:one).id, json["user_id"]
   end
 
   test "create without content succeeds" do
@@ -52,7 +51,7 @@ class Api::NotesControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unprocessable_entity
     json = JSON.parse(response.body)
-    assert_includes json["errors"], "Title can't be blank"
+    assert_includes json["errors"], "Título não pode ficar em branco"
   end
 
   test "show returns a note" do

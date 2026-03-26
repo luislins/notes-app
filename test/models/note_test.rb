@@ -18,7 +18,7 @@ class NoteTest < ActiveSupport::TestCase
   test "invalid without title" do
     note = @user.notes.build(title: nil)
     assert_not note.valid?
-    assert_includes note.errors[:title], "can't be blank"
+    assert_includes note.errors[:title], "não pode ficar em branco"
   end
 
   test "invalid with empty title" do
