@@ -97,8 +97,19 @@ const newCategoryName = ref('')
 const newCategoryColor = ref('#fdf0d5')
 const catNameInput = ref(null)
 
+function handleKeydown(e) {
+  if (e.key === 'Escape' && showNewCategory.value) {
+    showNewCategory.value = false
+  }
+}
+
 watch(showNewCategory, (val) => {
-  if (val) nextTick(() => catNameInput.value?.focus())
+  if (val) {
+    nextTick(() => catNameInput.value?.focus())
+    document.addEventListener('keydown', handleKeydown)
+  } else {
+    document.removeEventListener('keydown', handleKeydown)
+  }
 })
 
 const filteredNotes = computed(() => {

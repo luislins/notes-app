@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { isAuthenticated, logout, fetchCategories } from '../services/api.js'
 import AuthForm from './AuthForm.vue'
 import NoteForm from './NoteForm.vue'
@@ -36,9 +36,20 @@ const editingNote = ref(null)
 const list = ref(null)
 const categories = ref([])
 
+function handleKeydown(e) {
+  if (e.key === 'Escape' && showEditor.value) {
+    closeEditor()
+  }
+}
+
 onMounted(() => {
   authenticated.value = isAuthenticated()
   if (authenticated.value) loadCategories()
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('keydown', handleKeydown)
 })
 
 function onAuthenticated() {

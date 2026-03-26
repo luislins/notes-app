@@ -87,6 +87,13 @@ function handleClickOutside(e) {
   }
 }
 
+function handleKeydown(e) {
+  if (e.key === 'Escape' && dropdownOpen.value) {
+    dropdownOpen.value = false
+    e.stopPropagation()
+  }
+}
+
 const selectedCategory = computed(() =>
   props.categories.find(c => c.id === categoryId.value)
 )
@@ -106,10 +113,12 @@ onMounted(() => {
   }
   titleInput.value?.focus()
   document.addEventListener('click', handleClickOutside)
+  document.addEventListener('keydown', handleKeydown)
 })
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('keydown', handleKeydown)
 })
 
 async function handleSubmit() {
