@@ -74,6 +74,25 @@
         </div>
       </div>
     </div>
+
+    <!-- Pagination -->
+    <div v-if="meta.total_pages > 1" class="pagination">
+      <button
+        class="btn-page"
+        :disabled="meta.page <= 1"
+        @click="goToPage(meta.page - 1)"
+      >
+        &laquo; Anterior
+      </button>
+      <span class="page-info">{{ meta.page }} / {{ meta.total_pages }}</span>
+      <button
+        class="btn-page"
+        :disabled="meta.page >= meta.total_pages"
+        @click="goToPage(meta.page + 1)"
+      >
+        Próxima &raquo;
+      </button>
+    </div>
   </div>
 </template>
 
@@ -90,6 +109,7 @@ const emit = defineEmits(['categories-changed', 'edit'])
 const notes = ref([])
 const loading = ref(true)
 const filterCategoryId = ref(null)
+const meta = ref({ page: 1, per_page: 12, total: 0, total_pages: 1 })
 
 // New category state
 const showNewCategory = ref(false)
@@ -134,15 +154,21 @@ function noteCardStyle(note) {
   return { background: '#f0ece6' }
 }
 
-async function fetchNotes() {
+async function fetchNotes(page = 1) {
   loading.value = true
   try {
-    notes.value = await apiFetchNotes()
+    const data = await apiFetchNotes(page)
+    notes.value = data.notes
+    meta.value = data.meta
   } catch {
     notes.value = []
   } finally {
     loading.value = false
   }
+}
+
+function goToPage(page) {
+  fetchNotes(page)
 }
 
 async function handleDelete(id) {
@@ -561,5 +587,44 @@ defineExpose({ fetchNotes })
   background: rgba(255, 255, 255, 0.15);
   color: #ff9e9e;
   border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Pagination ── */
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.btn-page {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8125rem;
+}
+
+.btn-page:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--border-focus);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-page:disabled {
+  opacity: 0.35;
+  background: var(--surface);
+}
+
+.page-info {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 </style>

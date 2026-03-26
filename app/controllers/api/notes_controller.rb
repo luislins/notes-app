@@ -3,8 +3,17 @@ module Api
     before_action :set_note, only: [:show, :update, :destroy]
 
     def index
+      page = [params.fetch(:page, 1).to_i, 1].max
+      per_page = params.fetch(:per_page, 12).to_i.clamp(1, 50)
+
       notes = Current.user.notes.includes(:category).order(created_at: :desc)
-      render json: notes.map { |note| serialize(note) }
+      total = notes.count
+      paginated = notes.offset((page - 1) * per_page).limit(per_page)
+
+      render json: {
+        notes: paginated.map { |note| serialize(note) },
+        meta: { page: page, per_page: per_page, total: total, total_pages: (total.to_f / per_page).ceil }
+      }
     end
 
     def show

@@ -5,19 +5,21 @@ class Api::NotesControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(users(:one))
   end
 
-  test "index returns user notes" do
+  test "index returns user notes with pagination" do
     get api_notes_url, headers: auth_headers
     assert_response :success
 
     json = JSON.parse(response.body)
-    assert_equal users(:one).notes.count, json.length
+    assert_equal users(:one).notes.count, json["meta"]["total"]
+    assert_equal 1, json["meta"]["page"]
+    assert json["notes"].is_a?(Array)
   end
 
   test "index returns notes in descending order" do
     get api_notes_url, headers: auth_headers
     json = JSON.parse(response.body)
 
-    dates = json.map { |n| n["created_at"] }
+    dates = json["notes"].map { |n| n["created_at"] }
     assert_equal dates, dates.sort.reverse
   end
 

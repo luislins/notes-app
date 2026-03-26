@@ -45,8 +45,8 @@ export function isAuthenticated() {
   return !!getToken()
 }
 
-export async function fetchNotes() {
-  const response = await fetch(`${API_BASE}/api/notes`, { headers: authHeaders() })
+export async function fetchNotes(page = 1, perPage = 12) {
+  const response = await fetch(`${API_BASE}/api/notes?page=${page}&per_page=${perPage}`, { headers: authHeaders() })
   if (response.status === 401) throw new Error('unauthorized')
   return response.json()
 }
