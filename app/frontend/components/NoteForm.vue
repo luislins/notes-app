@@ -51,13 +51,16 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { createNote } from '../services/api.js'
+import { createNote, updateNote } from '../services/api.js'
 
 const props = defineProps({
-  categories: { type: Array, default: () => [] }
+  categories: { type: Array, default: () => [] },
+  note: { type: Object, default: null }
 })
 
-const emit = defineEmits(['created'])
+const emit = defineEmits(['saved'])
+
+const isEditing = computed(() => !!props.note)
 
 const title = ref('')
 const content = ref('')
@@ -74,10 +77,15 @@ const cardStyle = computed(() => {
   if (selectedCategory.value) {
     return { background: selectedCategory.value.color }
   }
-  return { background: '#f5ddd1' }
+  return { background: isEditing.value ? '#f0ece6' : '#f5ddd1' }
 })
 
 onMounted(() => {
+  if (props.note) {
+    title.value = props.note.title
+    content.value = props.note.content || ''
+    categoryId.value = props.note.category?.id || null
+  }
   titleInput.value?.focus()
 })
 
@@ -86,15 +94,14 @@ async function handleSubmit() {
   submitting.value = true
 
   try {
-    const result = await createNote(title.value, content.value, categoryId.value)
+    const result = isEditing.value
+      ? await updateNote(props.note.id, title.value, content.value, categoryId.value)
+      : await createNote(title.value, content.value, categoryId.value)
 
     if (result.ok) {
-      title.value = ''
-      content.value = ''
-      categoryId.value = null
-      emit('created')
+      emit('saved')
     } else {
-      errors.value = result.data.errors || ['Erro ao criar anotação']
+      errors.value = result.data.errors || ['Erro ao salvar anotação']
     }
   } catch {
     errors.value = ['Erro de conexão com o servidor']

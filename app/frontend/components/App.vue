@@ -7,17 +7,17 @@
           <h1>Anotações</h1>
         </div>
         <div class="header-actions">
-          <button class="btn-new-note" @click="showForm = true">+ Nova Nota</button>
+          <button class="btn-new-note" @click="openNew">+ Nova Nota</button>
           <button class="btn-logout" @click="handleLogout">Sair</button>
         </div>
       </header>
 
-      <div v-if="showForm" class="note-editor-overlay">
-        <button class="btn-editor-close" @click="showForm = false">&times;</button>
-        <NoteForm :categories="categories" @created="onNoteCreated" />
+      <div v-if="showEditor" class="note-editor-overlay">
+        <button class="btn-editor-close" @click="closeEditor">&times;</button>
+        <NoteForm :categories="categories" :note="editingNote" @saved="onNoteSaved" />
       </div>
 
-      <NoteList ref="list" :categories="categories" @categories-changed="loadCategories" />
+      <NoteList ref="list" :categories="categories" @categories-changed="loadCategories" @edit="openEdit" />
     </template>
     <AuthForm v-else @authenticated="onAuthenticated" />
   </div>
@@ -31,7 +31,8 @@ import NoteForm from './NoteForm.vue'
 import NoteList from './NoteList.vue'
 
 const authenticated = ref(false)
-const showForm = ref(false)
+const showEditor = ref(false)
+const editingNote = ref(null)
 const list = ref(null)
 const categories = ref([])
 
@@ -53,8 +54,23 @@ async function loadCategories() {
   }
 }
 
-function onNoteCreated() {
-  showForm.value = false
+function openNew() {
+  editingNote.value = null
+  showEditor.value = true
+}
+
+function openEdit(note) {
+  editingNote.value = note
+  showEditor.value = true
+}
+
+function closeEditor() {
+  showEditor.value = false
+  editingNote.value = null
+}
+
+function onNoteSaved() {
+  closeEditor()
   list.value.fetchNotes()
 }
 

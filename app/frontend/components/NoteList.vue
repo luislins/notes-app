@@ -61,50 +61,16 @@
         class="note-card"
         :style="noteCardStyle(note)"
       >
-        <template v-if="editingId === note.id">
-          <form @submit.prevent="saveEdit(note.id)" class="edit-form">
-            <div class="editor-category-picker">
-              <button
-                v-for="cat in categories"
-                :key="cat.id"
-                type="button"
-                class="category-dot"
-                :class="{ active: editCategoryId === cat.id }"
-                :style="{ background: cat.color }"
-                :title="cat.name"
-                @click="editCategoryId = editCategoryId === cat.id ? null : cat.id"
-              />
-              <button
-                type="button"
-                class="category-dot no-category"
-                :class="{ active: editCategoryId === null }"
-                title="Sem categoria"
-                @click="editCategoryId = null"
-              />
-            </div>
-            <input v-model="editTitle" placeholder="Título" />
-            <textarea v-model="editContent" placeholder="Conteúdo (opcional)" rows="3" />
-            <ul v-if="editErrors.length" class="errors">
-              <li v-for="error in editErrors" :key="error">{{ error }}</li>
-            </ul>
-            <div class="actions">
-              <button type="submit">Salvar</button>
-              <button type="button" class="btn-cancel" @click="cancelEdit">Cancelar</button>
-            </div>
-          </form>
-        </template>
-        <template v-else>
-          <div v-if="note.category" class="note-category-label">{{ note.category.name }}</div>
-          <h3>{{ note.title }}</h3>
-          <p v-if="note.content">{{ note.content }}</p>
-          <div class="note-footer">
-            <small>{{ formatDate(note.created_at) }}</small>
-            <div class="actions">
-              <button class="btn-edit" @click="startEdit(note)">Editar</button>
-              <button class="btn-delete" @click="handleDelete(note.id)">Excluir</button>
-            </div>
+        <div v-if="note.category" class="note-category-label">{{ note.category.name }}</div>
+        <h3>{{ note.title }}</h3>
+        <p v-if="note.content">{{ note.content }}</p>
+        <div class="note-footer">
+          <small>{{ formatDate(note.created_at) }}</small>
+          <div class="actions">
+            <button class="btn-edit" @click="emit('edit', note)">Editar</button>
+            <button class="btn-delete" @click="handleDelete(note.id)">Excluir</button>
           </div>
-        </template>
+        </div>
       </div>
     </div>
   </div>
@@ -112,25 +78,18 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue'
-import { fetchNotes as apiFetchNotes, updateNote, deleteNote, createCategory, deleteCategory } from '../services/api.js'
+import { fetchNotes as apiFetchNotes, deleteNote, createCategory, deleteCategory } from '../services/api.js'
 
 const props = defineProps({
   categories: { type: Array, default: () => [] }
 })
 
-const emit = defineEmits(['categories-changed'])
+const emit = defineEmits(['categories-changed', 'edit'])
 
 
 const notes = ref([])
 const loading = ref(true)
 const filterCategoryId = ref(null)
-
-// Edit state
-const editingId = ref(null)
-const editTitle = ref('')
-const editContent = ref('')
-const editCategoryId = ref(null)
-const editErrors = ref([])
 
 // New category state
 const showNewCategory = ref(false)
@@ -162,34 +121,6 @@ async function fetchNotes() {
     notes.value = []
   } finally {
     loading.value = false
-  }
-}
-
-function startEdit(note) {
-  editingId.value = note.id
-  editTitle.value = note.title
-  editContent.value = note.content || ''
-  editCategoryId.value = note.category?.id || null
-  editErrors.value = []
-}
-
-function cancelEdit() {
-  editingId.value = null
-  editErrors.value = []
-}
-
-async function saveEdit(id) {
-  editErrors.value = []
-  try {
-    const result = await updateNote(id, editTitle.value, editContent.value, editCategoryId.value)
-    if (result.ok) {
-      editingId.value = null
-      await fetchNotes()
-    } else {
-      editErrors.value = result.data.errors || ['Erro ao atualizar anotação']
-    }
-  } catch {
-    editErrors.value = ['Erro de conexão com o servidor']
   }
 }
 
