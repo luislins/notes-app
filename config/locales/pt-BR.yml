@@ -1,0 +1,30 @@
+pt-BR:
+  activerecord:
+    models:
+      note: Anotação
+      user: Usuário
+    attributes:
+      note:
+        title: Título
+        content: Conteúdo
+      user:
+        email_address: E-mail
+        password: Senha
+        password_confirmation: Confirmação de senha
+    errors:
+      messages:
+        record_invalid: "A validação falhou: %{errors}"
+        blank: não pode ficar em branco
+        taken: já está em uso
+        too_short: é muito curto (mínimo de %{count} caracteres)
+        too_long: é muito longo (máximo de %{count} caracteres)
+        invalid: não é válido
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      blank: não pode ficar em branco
+      taken: já está em uso
+      invalid: não é válido
+      required: é obrigatório
+      not_a_number: não é um número
+      confirmation: não é igual a %{attribute}
