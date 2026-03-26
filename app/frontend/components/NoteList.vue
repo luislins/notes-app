@@ -154,9 +154,11 @@ async function handleCreateCategory() {
       newCategoryColor.value = '#fdf0d5'
       showNewCategory.value = false
       emit('categories-changed')
+    } else {
+      alert(result.data.errors?.join(', ') || 'Erro ao criar categoria')
     }
   } catch {
-    // silently fail
+    alert('Erro de conexão com o servidor')
   }
 }
 
@@ -168,7 +170,7 @@ async function handleDeleteCategory(id) {
     emit('categories-changed')
     await fetchNotes()
   } catch {
-    // silently fail
+    alert('Erro ao remover categoria')
   }
 }
 
