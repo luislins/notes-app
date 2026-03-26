@@ -783,43 +783,88 @@ button:disabled {
   border-radius: 50%;
 }
 
-/* ── Category Picker (Editor) ── */
+/* ── Category Select (Editor) ── */
 
-.editor-category-picker {
-  display: flex;
-  gap: 0.5rem;
+.editor-category-select {
+  position: relative;
   margin-bottom: 1.25rem;
-  flex-wrap: wrap;
+  width: fit-content;
 }
 
-.category-dot {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 2px solid transparent;
-  padding: 0;
+.category-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--text);
   cursor: pointer;
-  transition: all var(--transition);
 }
 
-.category-dot:hover {
-  transform: scale(1.2);
+.category-select-trigger:hover {
+  background: rgba(255, 255, 255, 0.6);
+  transform: none;
   box-shadow: none;
 }
 
-.category-dot.active {
-  border-color: var(--text);
-  transform: scale(1.2);
+.select-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
 }
 
-.category-dot.no-category {
+.select-dot-empty {
+  border: 1.5px dashed rgba(0, 0, 0, 0.2);
+}
+
+.select-arrow {
+  font-size: 0.625rem;
+  opacity: 0.5;
+  margin-left: 0.25rem;
+}
+
+.category-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  min-width: 180px;
+  padding: 0.25rem;
+  z-index: 10;
+  animation: slideIn 150ms ease-out;
+}
+
+.category-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.category-dropdown-item:hover {
   background: var(--bg);
-  border: 2px dashed var(--border);
+  transform: none;
+  box-shadow: none;
 }
 
-.category-dot.no-category.active {
-  border-color: var(--text);
-  border-style: solid;
+.category-dropdown-item.active {
+  background: var(--accent-light);
+  color: var(--accent);
 }
 
 /* ── Note Category Label ── */
