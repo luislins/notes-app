@@ -1,9 +1,5 @@
 <template>
   <div class="note-editor-card" :style="cardStyle">
-    <ul v-if="errors.length" class="editor-errors">
-      <li v-for="error in errors" :key="error">{{ error }}</li>
-    </ul>
-
     <div class="editor-category-select" ref="dropdownRef">
       <button class="category-select-trigger" @click="dropdownOpen = !dropdownOpen" type="button">
         <span v-if="selectedCategory" class="select-dot" :style="{ background: selectedCategory.color }" />
@@ -15,7 +11,7 @@
         <button
           class="category-dropdown-item"
           :class="{ active: categoryId === null }"
-          @click="categoryId = null; dropdownOpen = false"
+          @click="selectCategory(null)"
           type="button"
         >
           <span class="select-dot select-dot-empty" />
@@ -26,7 +22,7 @@
           :key="cat.id"
           class="category-dropdown-item"
           :class="{ active: categoryId === cat.id }"
-          @click="categoryId = cat.id; dropdownOpen = false"
+          @click="selectCategory(cat.id)"
           type="button"
         >
           <span class="select-dot" :style="{ background: cat.color }" />
@@ -52,34 +48,77 @@
     />
 
     <div class="editor-footer">
-      <button class="btn-save" :disabled="submitting" @click="handleSubmit">
-        {{ submitting ? 'Salvando...' : 'Salvar' }}
-      </button>
+      <span class="save-status" :class="saveStatusClass">{{ saveStatusText }}</span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { createNote, updateNote } from '../services/api.js'
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import { updateNote } from '../services/api.js'
 
 const props = defineProps({
   categories: { type: Array, default: () => [] },
-  note: { type: Object, default: null }
+  note: { type: Object, required: true }
 })
-
-const emit = defineEmits(['saved'])
-
-const isEditing = computed(() => !!props.note)
 
 const title = ref('')
 const content = ref('')
 const categoryId = ref(null)
-const errors = ref([])
-const submitting = ref(false)
 const titleInput = ref(null)
 const dropdownRef = ref(null)
 const dropdownOpen = ref(false)
+
+// Autosave state
+const saveStatus = ref('saved') // 'saved' | 'saving' | 'idle'
+let debounceTimer = null
+
+const saveStatusText = computed(() => {
+  if (saveStatus.value === 'saving') return 'Salvando...'
+  if (saveStatus.value === 'saved') return 'Salvo'
+  return ''
+})
+
+const saveStatusClass = computed(() => saveStatus.value)
+
+const selectedCategory = computed(() =>
+  props.categories.find(c => c.id === categoryId.value)
+)
+
+const cardStyle = computed(() => {
+  if (selectedCategory.value) {
+    return { background: selectedCategory.value.color }
+  }
+  return { background: '#f0ece6' }
+})
+
+function selectCategory(id) {
+  categoryId.value = id
+  dropdownOpen.value = false
+  triggerAutosave()
+}
+
+function triggerAutosave() {
+  saveStatus.value = 'idle'
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(autoSave, 500)
+}
+
+async function autoSave() {
+  if (!props.note?.id) return
+
+  saveStatus.value = 'saving'
+  try {
+    await updateNote(props.note.id, title.value, content.value, categoryId.value)
+    saveStatus.value = 'saved'
+  } catch {
+    saveStatus.value = 'idle'
+  }
+}
+
+// Watch text fields for changes
+watch(title, () => triggerAutosave())
+watch(content, () => triggerAutosave())
 
 function handleClickOutside(e) {
   if (dropdownRef.value && !dropdownRef.value.contains(e.target)) {
@@ -94,59 +133,30 @@ function handleKeydown(e) {
   }
 }
 
-const selectedCategory = computed(() =>
-  props.categories.find(c => c.id === categoryId.value)
-)
-
-const cardStyle = computed(() => {
-  if (selectedCategory.value) {
-    return { background: selectedCategory.value.color }
-  }
-  return { background: isEditing.value ? '#f0ece6' : '#f5ddd1' }
-})
-
 onMounted(() => {
-  if (props.note) {
-    title.value = props.note.title
-    content.value = props.note.content || ''
-    categoryId.value = props.note.category?.id || null
-  }
+  title.value = props.note.title === 'Sem título' ? '' : props.note.title
+  content.value = props.note.content || ''
+  categoryId.value = props.note.category?.id || null
+  saveStatus.value = 'saved'
+
   titleInput.value?.focus()
   document.addEventListener('click', handleClickOutside)
   document.addEventListener('keydown', handleKeydown)
 })
 
 onBeforeUnmount(() => {
+  clearTimeout(debounceTimer)
+  // Save immediately on close if there are pending changes
+  if (saveStatus.value === 'idle' && props.note?.id) {
+    updateNote(props.note.id, title.value, content.value, categoryId.value)
+  }
   document.removeEventListener('click', handleClickOutside)
   document.removeEventListener('keydown', handleKeydown)
 })
 
-async function handleSubmit() {
-  errors.value = []
-
-  if (!title.value.trim()) {
-    errors.value = ['Título não pode ficar em branco']
-    return
-  }
-
-  submitting.value = true
-
-  try {
-    const result = isEditing.value
-      ? await updateNote(props.note.id, title.value, content.value, categoryId.value)
-      : await createNote(title.value, content.value, categoryId.value)
-
-    if (result.ok) {
-      emit('saved')
-    } else {
-      errors.value = result.data.errors || ['Erro ao salvar anotação']
-    }
-  } catch {
-    errors.value = ['Erro de conexão com o servidor']
-  } finally {
-    submitting.value = false
-  }
-}
+defineExpose({
+  get currentTitle() { return title.value }
+})
 </script>
 
 <style scoped>
@@ -161,22 +171,6 @@ async function handleSubmit() {
   display: flex;
   flex-direction: column;
   animation: slideIn 350ms ease-out;
-}
-
-.editor-errors {
-  list-style: none;
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  background: rgba(192, 57, 43, 0.08);
-  border: 1px solid rgba(192, 57, 43, 0.15);
-  border-radius: var(--radius-sm);
-  color: var(--danger);
-  font-size: 0.8125rem;
-  font-weight: 500;
-}
-
-.editor-errors li + li {
-  margin-top: 0.25rem;
 }
 
 .editor-category-select {
@@ -304,15 +298,21 @@ async function handleSubmit() {
   padding-top: 1rem;
 }
 
-.btn-save {
-  background: rgba(0, 0, 0, 0.7);
-  color: #fff;
-  padding: 0.5rem 1.5rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
+.save-status {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  transition: opacity var(--transition);
 }
 
-.btn-save:hover {
-  background: rgba(0, 0, 0, 0.85);
+.save-status.saving {
+  opacity: 0.7;
+}
+
+.save-status.saved {
+  opacity: 0.5;
+}
+
+.save-status.idle {
+  opacity: 0;
 }
 </style>

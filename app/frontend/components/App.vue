@@ -14,7 +14,7 @@
 
       <div v-if="showEditor" class="note-editor-overlay">
         <button class="btn-editor-close" @click="closeEditor">&times;</button>
-        <NoteForm :categories="categories" :note="editingNote" @saved="onNoteSaved" />
+        <NoteForm ref="noteForm" :categories="categories" :note="editingNote" />
       </div>
 
       <NoteList ref="list" :categories="categories" @categories-changed="loadCategories" @edit="openEdit" />
@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { isAuthenticated, logout, fetchCategories } from '../services/api.js'
+import { isAuthenticated, logout, fetchCategories, createNote, deleteNote } from '../services/api.js'
 import AuthForm from './AuthForm.vue'
 import NoteForm from './NoteForm.vue'
 import NoteList from './NoteList.vue'
@@ -34,6 +34,7 @@ const authenticated = ref(false)
 const showEditor = ref(false)
 const editingNote = ref(null)
 const list = ref(null)
+const noteForm = ref(null)
 const categories = ref([])
 
 function handleKeydown(e) {
@@ -65,9 +66,16 @@ async function loadCategories() {
   }
 }
 
-function openNew() {
-  editingNote.value = null
-  showEditor.value = true
+async function openNew() {
+  try {
+    const result = await createNote('Sem título', '', null)
+    if (result.ok) {
+      editingNote.value = result.data
+      showEditor.value = true
+    }
+  } catch {
+    // fail silently
+  }
 }
 
 function openEdit(note) {
@@ -75,13 +83,14 @@ function openEdit(note) {
   showEditor.value = true
 }
 
-function closeEditor() {
+async function closeEditor() {
+  const note = editingNote.value
+  const currentTitle = noteForm.value?.currentTitle
+  if (note && !currentTitle?.trim()) {
+    await deleteNote(note.id)
+  }
   showEditor.value = false
   editingNote.value = null
-}
-
-function onNoteSaved() {
-  closeEditor()
   list.value.fetchNotes()
 }
 
