@@ -1,0 +1,53 @@
+# Docker Compose para ambiente de desenvolvimento
+# Uso: docker compose up
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: bash -c "bin/rails db:prepare && bin/rails s -b 0.0.0.0 -p 5100"
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+      - node_modules:/app/node_modules
+    ports:
+      - "5100:5100"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/notes_app_development
+
+  vite:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: npx vite --config /app/vite.config.docker.ts
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    ports:
+      - "3036:3036"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/notes_app_development
+
+volumes:
+  postgres_data:
+  bundle_cache:
+  node_modules:
