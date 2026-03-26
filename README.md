@@ -41,6 +41,10 @@ npm install
 
 # Criar e migrar o banco de dados
 bin/rails db:create db:migrate
+
+# (Opcional) Popular com dados de demonstracao
+bin/rails db:seed
+# Usuario: demo@email.com / Senha: 12345678
 ```
 
 ## Executando o projeto
