@@ -51,6 +51,12 @@ export async function fetchNotes(page = 1, perPage = 12) {
   return response.json()
 }
 
+export async function fetchNote(id) {
+  const response = await fetch(`${API_BASE}/api/notes/${id}`, { headers: authHeaders() })
+  if (response.status === 401) throw new Error('unauthorized')
+  return response.json()
+}
+
 export async function createNote(title, content, category_id) {
   const response = await fetch(`${API_BASE}/api/notes`, {
     method: 'POST',

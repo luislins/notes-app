@@ -129,7 +129,7 @@ function handleClickOutside(e) {
 function handleKeydown(e) {
   if (e.key === 'Escape' && dropdownOpen.value) {
     dropdownOpen.value = false
-    e.stopPropagation()
+    e.preventDefault()
   }
 }
 
