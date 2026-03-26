@@ -1,5 +1,11 @@
 export const API_BASE = import.meta.env.VITE_API_URL || ''
 
+let onUnauthorized = null
+
+export function setOnUnauthorized(callback) {
+  onUnauthorized = callback
+}
+
 export function getToken() {
   return localStorage.getItem('token')
 }
@@ -21,4 +27,12 @@ export function authHeaders() {
 
 export function isAuthenticated() {
   return !!getToken()
+}
+
+export function handleResponse(response) {
+  if (response.status === 401 && onUnauthorized) {
+    removeToken()
+    onUnauthorized()
+  }
+  return response
 }
