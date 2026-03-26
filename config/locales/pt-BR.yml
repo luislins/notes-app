@@ -31,3 +31,10 @@ pt-BR:
       required: é obrigatório
       not_a_number: não é um número
       confirmation: não é igual a %{attribute}
+  controllers:
+    authentication:
+      unauthorized: Não autorizado
+    sessions:
+      rate_limited: Muitas tentativas. Tente novamente mais tarde.
+      invalid_credentials: E-mail ou senha inválidos
+      destroyed: Sessão encerrada

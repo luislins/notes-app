@@ -31,7 +31,7 @@ module Authentication
   end
 
   def request_authentication
-    render json: { error: "Não autorizado" }, status: :unauthorized
+    render json: { error: I18n.t("controllers.authentication.unauthorized") }, status: :unauthorized
   end
 
   def start_new_session_for(user)

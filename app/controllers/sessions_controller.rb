@@ -1,7 +1,7 @@
 class SessionsController < ApplicationController
   allow_unauthenticated_access only: [:create]
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> {
-    render json: { error: "Muitas tentativas. Tente novamente mais tarde." }, status: :too_many_requests
+    render json: { error: I18n.t("controllers.sessions.rate_limited") }, status: :too_many_requests
   }
 
   def create
@@ -9,13 +9,13 @@ class SessionsController < ApplicationController
       start_new_session_for(user)
       render json: { token: Current.session.token, user: user_json(user) }
     else
-      render json: { errors: ["E-mail ou senha inválidos"] }, status: :unauthorized
+      render json: { errors: [I18n.t("controllers.sessions.invalid_credentials")] }, status: :unauthorized
     end
   end
 
   def destroy
     terminate_session
-    render json: { message: "Sessão encerrada" }
+    render json: { message: I18n.t("controllers.sessions.destroyed") }
   end
 
   private
