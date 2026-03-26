@@ -1,37 +1,35 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="note-form">
-    <div class="form-group">
-      <label for="title">Título *</label>
-      <input
-        id="title"
-        v-model="title"
-        type="text"
-        placeholder="Digite o título da anotação"
-      />
-    </div>
-
-    <div class="form-group">
-      <label for="content">Conteúdo</label>
-      <textarea
-        id="content"
-        v-model="content"
-        placeholder="Digite o conteúdo (opcional)"
-        rows="4"
-      />
-    </div>
-
-    <ul v-if="errors.length" class="errors">
+  <div class="note-editor-card">
+    <ul v-if="errors.length" class="editor-errors">
       <li v-for="error in errors" :key="error">{{ error }}</li>
     </ul>
 
-    <button type="submit" :disabled="submitting">
-      {{ submitting ? 'Salvando...' : 'Criar Anotação' }}
-    </button>
-  </form>
+    <input
+      ref="titleInput"
+      v-model="title"
+      type="text"
+      class="editor-title"
+      placeholder="Título da nota"
+      @keydown.enter.prevent="$refs.contentArea.focus()"
+    />
+
+    <textarea
+      ref="contentArea"
+      v-model="content"
+      class="editor-content"
+      placeholder="Escreva sua nota..."
+    />
+
+    <div class="editor-footer">
+      <button class="btn-save" :disabled="submitting" @click="handleSubmit">
+        {{ submitting ? 'Salvando...' : 'Salvar' }}
+      </button>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { createNote } from '../services/api.js'
 
 const emit = defineEmits(['created'])
@@ -40,6 +38,11 @@ const title = ref('')
 const content = ref('')
 const errors = ref([])
 const submitting = ref(false)
+const titleInput = ref(null)
+
+onMounted(() => {
+  titleInput.value?.focus()
+})
 
 async function handleSubmit() {
   errors.value = []

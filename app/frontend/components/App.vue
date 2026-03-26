@@ -12,14 +12,9 @@
         </div>
       </header>
 
-      <div v-if="showForm" class="modal-overlay" @click.self="showForm = false">
-        <div class="modal">
-          <div class="modal-header">
-            <h2>Nova Anotação</h2>
-            <button class="btn-modal-close" @click="showForm = false">&times;</button>
-          </div>
-          <NoteForm @created="onNoteCreated" />
-        </div>
+      <div v-if="showForm" class="note-editor-overlay">
+        <button class="btn-editor-close" @click="showForm = false">&times;</button>
+        <NoteForm @created="onNoteCreated" />
       </div>
 
       <NoteList ref="list" />
@@ -99,9 +94,9 @@ body {
 }
 
 .container {
-  max-width: 780px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  padding: 3rem 2rem 4rem;
   animation: fadeIn 600ms ease-out;
 }
 
@@ -182,24 +177,7 @@ h2 {
   color: var(--accent-hover);
 }
 
-/* ── Note Form ── */
-
-.note-form {
-  background: var(--surface);
-  padding: 1.75rem;
-  border-radius: var(--radius);
-  margin-bottom: 2.5rem;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow var(--transition);
-}
-
-.note-form:focus-within {
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-focus);
-}
-
-/* ── Form Elements ── */
+/* ── Form Elements (Auth) ── */
 
 .form-group {
   margin-bottom: 1.25rem;
@@ -278,6 +256,25 @@ button:disabled {
   box-shadow: none;
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-new-note {
+  background: var(--accent);
+  color: #fff;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.btn-new-note:hover {
+  background: var(--accent-hover);
+}
+
 .btn-logout {
   background: transparent;
   color: var(--text-muted);
@@ -291,6 +288,123 @@ button:disabled {
   background: var(--danger-light);
   transform: none;
   box-shadow: none;
+}
+
+/* ── Note Editor (full page) ── */
+
+.note-editor-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
+  animation: fadeIn 250ms ease-out;
+}
+
+.btn-editor-close {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.5rem;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 2rem;
+  padding: 0.25rem 0.625rem;
+  line-height: 1;
+  z-index: 10;
+}
+
+.btn-editor-close:hover {
+  color: var(--text);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
+}
+
+.note-editor-card {
+  background: #f5ddd1;
+  border-radius: 16px;
+  border: 1.5px solid rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 720px;
+  min-height: 70vh;
+  margin-top: 2.5rem;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 350ms ease-out;
+}
+
+.editor-errors {
+  list-style: none;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(192, 57, 43, 0.08);
+  border: 1px solid rgba(192, 57, 43, 0.15);
+  border-radius: var(--radius-sm);
+  color: var(--danger);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.editor-errors li + li {
+  margin-top: 0.25rem;
+}
+
+.editor-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 400;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0;
+}
+
+.editor-title::placeholder {
+  color: rgba(44, 36, 24, 0.35);
+}
+
+.editor-content {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+  flex-grow: 1;
+  resize: none;
+  line-height: 1.7;
+  padding: 0;
+}
+
+.editor-content::placeholder {
+  color: rgba(44, 36, 24, 0.3);
+}
+
+.editor-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+}
+
+.btn-save {
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+}
+
+.btn-save:hover {
+  background: rgba(0, 0, 0, 0.85);
 }
 
 /* ── Errors ── */
@@ -324,19 +438,20 @@ button:disabled {
 
 .notes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 0.875rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
 }
 
 .note-card {
-  padding: 1.25rem 1.375rem;
+  padding: 1.5rem 1.5rem 1.25rem;
   border-radius: var(--radius);
-  border: none;
+  border: 1.5px solid rgba(0, 0, 0, 0.05);
   box-shadow: var(--shadow-sm);
   transition: all var(--transition);
   animation: slideIn 400ms ease-out both;
   display: flex;
   flex-direction: column;
+  min-height: 180px;
 }
 
 .note-card:nth-child(1) { animation-delay: 0ms; }
@@ -361,17 +476,17 @@ button:disabled {
 
 .note-card h3 {
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 400;
-  margin-bottom: 0.375rem;
+  margin-bottom: 0.5rem;
   color: var(--text);
 }
 
 .note-card p {
   color: var(--text-secondary);
   margin-bottom: 0.5rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
+  font-size: 0.9rem;
+  line-height: 1.6;
   flex-grow: 1;
 }
 
