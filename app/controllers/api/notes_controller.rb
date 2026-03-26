@@ -4,20 +4,18 @@ module Api
 
     def index
       notes = Current.user.notes.includes(:category).order(created_at: :desc)
-      render json: notes.map { |note|
-        note.as_json.merge(category: note.category&.as_json)
-      }
+      render json: notes.map { |note| serialize(note) }
     end
 
     def show
-      render json: @note
+      render json: serialize(@note)
     end
 
     def create
       note = Current.user.notes.build(note_params)
 
       if note.save
-        render json: note, status: :created
+        render json: serialize(note), status: :created
       else
         render json: { errors: note.errors.full_messages }, status: :unprocessable_entity
       end
@@ -25,7 +23,7 @@ module Api
 
     def update
       if @note.update(note_params)
-        render json: @note
+        render json: serialize(@note)
       else
         render json: { errors: @note.errors.full_messages }, status: :unprocessable_entity
       end
@@ -44,6 +42,11 @@ module Api
 
     def note_params
       params.expect(note: [:title, :content, :category_id])
+    end
+
+    def serialize(note)
+      note.as_json(only: [:id, :title, :content, :category_id, :created_at, :updated_at])
+          .merge(category: note.category&.as_json(only: [:id, :name, :color]))
     end
   end
 end
