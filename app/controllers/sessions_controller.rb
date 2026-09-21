@@ -1,5 +1,5 @@
 class SessionsController < ApplicationController
-  allow_unauthenticated_access only: [:create]
+  allow_unauthenticated_access only: [ :create ]
   rate_limit to: 10, within: 3.minutes, only: :create, with: -> {
     render json: { error: I18n.t("controllers.sessions.rate_limited") }, status: :too_many_requests
   }
@@ -9,7 +9,7 @@ class SessionsController < ApplicationController
       start_new_session_for(user)
       render json: { token: Current.session.token, user: user_json(user) }
     else
-      render json: { errors: [I18n.t("controllers.sessions.invalid_credentials")] }, status: :unauthorized
+      render json: { errors: [ I18n.t("controllers.sessions.invalid_credentials") ] }, status: :unauthorized
     end
   end
 

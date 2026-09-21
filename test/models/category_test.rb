@@ -23,7 +23,7 @@ class CategoryTest < ActiveSupport::TestCase
   end
 
   test "invalid with non-hex color" do
-    ["red", "#fff", "#ffff", "4a90d9", "#gg0000"].each do |invalid_color|
+    [ "red", "#fff", "#ffff", "4a90d9", "#gg0000" ].each do |invalid_color|
       category = @user.categories.build(name: "Teste", color: invalid_color)
       assert_not category.valid?, "Expected #{invalid_color} to be invalid"
     end

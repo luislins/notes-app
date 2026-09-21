@@ -42,7 +42,7 @@ notes_data = [
   { title: "Aniversario da Mae", content: "Comprar presente ate sexta. Reservar restaurante para sabado. Chamar os irmaos para combinar.", category: pessoal },
   { title: "Investimentos", content: "Pesquisar fundos imobiliarios. Rebalancear carteira de acoes. Verificar vencimento do CDB.", category: financas },
   { title: "Receita de bolo de cenoura", content: "3 cenouras, 4 ovos, 1 xicara de oleo, 2 xicaras de acucar, 2.5 xicaras de farinha, 1 colher de fermento. Cobertura: chocolate meio amargo com creme de leite.", category: pessoal },
-  { title: "Configurar CI/CD", content: "GitHub Actions para rodar testes automaticamente. Deploy automatico na main. Notificar no Slack em caso de falha.", category: trabalho },
+  { title: "Configurar CI/CD", content: "GitHub Actions para rodar testes automaticamente. Deploy automatico na main. Notificar no Slack em caso de falha.", category: trabalho }
 ]
 
 notes_data.each_with_index do |data, i|

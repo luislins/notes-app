@@ -1,5 +1,5 @@
 class RegistrationsController < ApplicationController
-  allow_unauthenticated_access only: [:create]
+  allow_unauthenticated_access only: [ :create ]
 
   def create
     user = User.new(registration_params)
@@ -15,7 +15,7 @@ class RegistrationsController < ApplicationController
   private
 
   def registration_params
-    params.expect(user: [:email_address, :password, :password_confirmation])
+    params.expect(user: [ :email_address, :password, :password_confirmation ])
   end
 
   def user_json(user)

@@ -1,6 +1,6 @@
 module Api
   class CategoriesController < ApplicationController
-    before_action :set_category, only: [:update, :destroy]
+    before_action :set_category, only: [ :update, :destroy ]
 
     def index
       categories = Current.user.categories.order(:created_at)
@@ -37,7 +37,7 @@ module Api
     end
 
     def category_params
-      params.expect(category: [:name, :color])
+      params.expect(category: [ :name, :color ])
     end
   end
 end
