@@ -1,9 +1,9 @@
 module Api
   class NotesController < ApplicationController
-    before_action :set_note, only: [:show, :update, :destroy]
+    before_action :set_note, only: [ :show, :update, :destroy ]
 
     def index
-      page = [params.fetch(:page, 1).to_i, 1].max
+      page = [ params.fetch(:page, 1).to_i, 1 ].max
       per_page = params.fetch(:per_page, 12).to_i.clamp(1, 50)
 
       notes = Current.user.notes.includes(:category).order(created_at: :desc)
@@ -50,12 +50,12 @@ module Api
     end
 
     def note_params
-      params.expect(note: [:title, :content, :category_id])
+      params.expect(note: [ :title, :content, :category_id ])
     end
 
     def serialize(note)
-      note.as_json(only: [:id, :title, :content, :category_id, :created_at, :updated_at])
-          .merge(category: note.category&.as_json(only: [:id, :name, :color]))
+      note.as_json(only: [ :id, :title, :content, :category_id, :created_at, :updated_at ])
+          .merge(category: note.category&.as_json(only: [ :id, :name, :color ]))
     end
   end
 end

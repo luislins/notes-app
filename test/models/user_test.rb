@@ -20,7 +20,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "invalid with malformed email" do
-    ["invalid", "no@", "@nodomain", "spaces in@email.com"].each do |bad_email|
+    [ "invalid", "no@", "@nodomain", "spaces in@email.com" ].each do |bad_email|
       user = User.new(email_address: bad_email, password: "password123")
       assert_not user.valid?, "Expected #{bad_email} to be invalid"
     end
