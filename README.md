@@ -6,11 +6,8 @@ A personal note-taking app with colour-coded categories. Rails 8 in API mode,
 Vue 3 single-page frontend, PostgreSQL. Token authentication, autosaving
 editor, 60 tests.
 
-<!-- SCREENSHOTS
-Add two before publishing:
-  ![Notes list](docs/images/notes.png)
-  ![Editor](docs/images/editor.png)
--->
+![Notes list](docs/images/notes.png)
+![Editor](docs/images/editor.png)
 
 ## Features
 
